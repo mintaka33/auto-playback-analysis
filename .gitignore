@@ -2,5 +2,9 @@
 Debug
 Release
 x64
+ipch
 
+*.user
 *.bmp
+*.VC.db
+*.VC.opendb
