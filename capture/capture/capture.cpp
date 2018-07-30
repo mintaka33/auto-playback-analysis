@@ -44,10 +44,6 @@ INT CaptureDesktop::initialize()
     hr = pDxgiAdapter_->EnumOutputs(0, &pDxgiOutput_);
     RETURN_IF_FAIL(hr);
 
-    // Get output description
-    DXGI_OUTPUT_DESC outputDesc = {};
-    pDxgiOutput_->GetDesc(&outputDesc);
-
     // Query interface of Output1
     hr = pDxgiOutput_->QueryInterface(__uuidof(pDxgiOutput1_), reinterpret_cast<void**>(&pDxgiOutput1_));
     RETURN_IF_FAIL(hr);
@@ -79,6 +75,47 @@ INT CaptureDesktop::initialize()
 
 INT CaptureDesktop::getFrame(FrameProp* prop)
 {
+    HRESULT hr = S_OK;
+
+    // Get frame
+    DXGI_OUTDUPL_FRAME_INFO frameInfo = {};
+    hr = pOutputDupl_->AcquireNextFrame(500, &frameInfo, &pDesktopResource_);
+    RETURN_IF_FAIL(hr);
+
+    // Query interface of IDXGIResource
+    hr = pDesktopResource_->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&pDesktopSrc_));
+    RETURN_IF_FAIL(hr);
+
+    // Copy desktop data
+    pDeviceContext_->CopyResource(pDesktopDst_, pDesktopSrc_);
+    D3D11_MAPPED_SUBRESOURCE subRes = {};
+    UINT subResIndex = D3D11CalcSubresource(0, 0, 0);
+    hr = pDeviceContext_->Map(pDesktopDst_, subResIndex, D3D11_MAP_READ, 0, &subRes);
+    RETURN_IF_FAIL(hr);
+
+    BYTE* pSrc = reinterpret_cast<BYTE*>(subRes.pData);
+
+    // Calculate frame height
+    pitch_ = subRes.RowPitch;
+    DXGI_OUTPUT_DESC outputDesc = {};
+    pDxgiOutput_->GetDesc(&outputDesc);
+    height_ = outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top;
+
+    if (pData_ == nullptr)
+    {
+        pData_ = new BYTE[pitch_ * height_];
+    }
+
+    INT size = pitch_ * height_;
+    memcpy_s(pData_, size, pSrc, size);
+
+    pDeviceContext_->Unmap(pDesktopDst_, subResIndex);
+
+    prop->pData = pData_;
+    prop->pitch = pitch_;
+    prop->height = height_;
+    prop->size = size;
+
     return 0;
 }
 
