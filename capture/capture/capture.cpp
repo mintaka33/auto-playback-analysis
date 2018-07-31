@@ -77,6 +77,10 @@ INT CaptureDesktop::getFrame(FrameProp* prop)
 {
     HRESULT hr = S_OK;
 
+    // need a sleep here, or will get blank surface. 
+    // TODO: need figure out root cause
+    Sleep(50);
+
     // Get frame
     DXGI_OUTDUPL_FRAME_INFO frameInfo = {};
     hr = pOutputDupl_->AcquireNextFrame(500, &frameInfo, &pDesktopResource_);
