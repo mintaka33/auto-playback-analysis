@@ -15,6 +15,11 @@ public:
     int overlayFrame(int frameIndex, int value);
     int destroy();
 
+    int getFrameNum() 
+    {
+        return frameNum_;
+    }
+
 private:
     int calcFrameSize();
     int readFrame(int frameIndex);
