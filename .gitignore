@@ -8,3 +8,4 @@ ipch
 *.bmp
 *.VC.db
 *.VC.opendb
+*.yuv
