@@ -1,5 +1,5 @@
 # playback-analysis
-capture desktop surface and do video playback correctness analysis
+capture desktop surface and analyze video playback correctness
 
 ## reference
 https://docs.microsoft.com/zh-cn/windows/desktop/direct3darticles/surface-sharing-between-windows-graphics-apis
