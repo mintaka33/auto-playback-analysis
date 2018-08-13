@@ -79,7 +79,7 @@ INT CaptureDesktop::getFrame(FrameProp* prop)
 
     // need a sleep here, or will get blank surface. 
     // TODO: need figure out root cause
-    Sleep(50);
+    Sleep(5);
 
     // Get frame
     DXGI_OUTDUPL_FRAME_INFO frameInfo = {};
