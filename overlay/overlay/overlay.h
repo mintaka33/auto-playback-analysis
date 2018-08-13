@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include <string>
 
+#define BLOCK_SIZE 16
+
 class YuvOverlay
 {
 public:
@@ -16,8 +18,9 @@ public:
 private:
     int calcFrameSize();
     int readFrame(int frameIndex);
-    int overlay();
-    int writeFrame();
+    void writeBlock(char* pBuf, int index, int blockSize, int pitch, char bin);
+    void writeOverlay(int index, int bin);
+    int writeFrame(int frameIndex);
 
 private:
     int width_ = 0;
@@ -25,7 +28,8 @@ private:
     int frameSize_ = 0;
     int frameNum_ = 0;
     std::string format_ = "";
-    std::string fileName_ = "";
+    std::string inFileName_ = "";
+    std::string outFileName_ = "";
     char* pFrame_ = nullptr;
     char* pY_ = nullptr;
     char* pU_ = nullptr;
